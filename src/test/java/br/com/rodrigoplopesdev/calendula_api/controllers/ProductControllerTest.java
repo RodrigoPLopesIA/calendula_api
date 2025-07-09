@@ -52,7 +52,7 @@ public class ProductControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json);
 
-        mvc.perform(request).andExpect(MockMvcResultMatchers.status().isOk())
+        mvc.perform(request).andExpect(MockMvcResultMatchers.status().isCreated())
                 .andExpect(MockMvcResultMatchers.jsonPath("id").value("722dc867-ea3d-40a5-936d-70e29e830b99"))
                 .andExpect(MockMvcResultMatchers.jsonPath("title").value("Test"));
     }
