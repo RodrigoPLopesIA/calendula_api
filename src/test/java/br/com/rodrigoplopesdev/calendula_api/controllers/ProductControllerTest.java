@@ -2,9 +2,13 @@ package br.com.rodrigoplopesdev.calendula_api.controllers;
 
 import br.com.rodrigoplopesdev.calendula_api.dtos.CreateProductDTO;
 import br.com.rodrigoplopesdev.calendula_api.dtos.ProductDTO;
+import br.com.rodrigoplopesdev.calendula_api.models.Product;
 import br.com.rodrigoplopesdev.calendula_api.services.ProductService;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.util.Arrays;
+import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
@@ -28,7 +32,7 @@ public class ProductControllerTest {
     @Autowired
     private MockMvc mvc;
 
-    @Mock
+    @MockBean
     private ProductService productService;
 
     @Test
@@ -37,8 +41,14 @@ public class ProductControllerTest {
 
         CreateProductDTO data = new CreateProductDTO("Test", "test", 25.05, "15cm");
         String json = new ObjectMapper().writeValueAsString(data);
+        Product product = Product.builder()
+        .id(UUID.randomUUID())
+        .title("Test")
+        .description("test")
+        .cores(Arrays.asList("Azul", "verde"))
+        .build();
 
-        BDDMockito.given(productService.save(Mockito.any(CreateProductDTO.class))).willReturn(ProductDTO.class);
+        BDDMockito.given(productService.save(Mockito.any(CreateProductDTO.class))).willReturn(product);
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
                 .post("/api/v1/products")
