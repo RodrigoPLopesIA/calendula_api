@@ -14,8 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.net.URI;
-import java.time.LocalDate;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/products")

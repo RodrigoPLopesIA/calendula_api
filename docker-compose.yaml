@@ -1,0 +1,13 @@
+services:
+  calendula_db:
+    container_name: calendula_db
+    image: mongo:lastest
+    ports:
+      - ${DB_PORT}:${DB_PORT}
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${DB_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - mongo_data:/data/db
+volumes:
+  mongo_data:
