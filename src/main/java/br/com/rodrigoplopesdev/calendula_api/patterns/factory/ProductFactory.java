@@ -10,7 +10,7 @@ public class ProductFactory {
 
     public static Product getInstance(CreateProductDTO data) {
         return  Product.builder()
-                        .id(UUID.fromString("722dc867-ea3d-40a5-936d-70e29e830b99"))
+                        .id("722dc867-ea3d-40a5-936d-70e29e830b99")
                         .title(data.title())
                         .description(data.description())
                         .price(data.price())

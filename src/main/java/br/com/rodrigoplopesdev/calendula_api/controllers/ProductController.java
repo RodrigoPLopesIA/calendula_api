@@ -23,11 +23,11 @@ public class ProductController {
     private ProductService productService;
 
     @PostMapping
-    public ResponseEntity create(@RequestBody CreateProductDTO data, UriComponentsBuilder builderUri) {
+    public ResponseEntity<ProductDTO> create(@RequestBody CreateProductDTO data, UriComponentsBuilder builderUri) {
         Product product = this.productService.save(data);
         URI uri = builderUri.fromUriString("api/v1/products/{id}").buildAndExpand(product.getId()).toUri();
         
-        return ResponseEntity.created(uri).body(product);
+        return ResponseEntity.created(uri).body(new ProductDTO(product));
     }
 
 }

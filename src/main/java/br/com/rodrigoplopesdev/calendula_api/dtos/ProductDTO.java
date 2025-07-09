@@ -1,11 +1,11 @@
 package br.com.rodrigoplopesdev.calendula_api.dtos;
 
-import lombok.Builder;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.UUID;
+import br.com.rodrigoplopesdev.calendula_api.models.Product;
 
-@Builder
-public record ProductDTO(UUID id, String title, String description, Double price, String size, LocalDate createdAt, LocalDate updatedAt) {
+public record ProductDTO(String id, String title, String description, Double price) {
+
+    public ProductDTO(Product product){
+        this(product.getId() , product.getTitle(), product.getDescription(), product.getPrice());
+    }
 }
