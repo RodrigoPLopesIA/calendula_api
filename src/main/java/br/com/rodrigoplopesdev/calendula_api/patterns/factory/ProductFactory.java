@@ -14,7 +14,7 @@ public class ProductFactory {
                         .title(data.title())
                         .description(data.description())
                         .price(data.price())
-                        .cores(data.cores())
+                        .colors(data.colors())
                         .build();
     }
 
