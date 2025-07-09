@@ -3,6 +3,7 @@ package br.com.rodrigoplopesdev.calendula_api.controllers;
 import br.com.rodrigoplopesdev.calendula_api.dtos.CreateProductDTO;
 import br.com.rodrigoplopesdev.calendula_api.dtos.ProductDTO;
 import br.com.rodrigoplopesdev.calendula_api.models.Product;
+import br.com.rodrigoplopesdev.calendula_api.patterns.factory.ProductFactory;
 import br.com.rodrigoplopesdev.calendula_api.services.ProductService;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,7 +25,6 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-
 @WebMvcTest
 @AutoConfigureMockMvc
 public class ProductControllerTest {
@@ -37,16 +37,12 @@ public class ProductControllerTest {
 
     @Test
     @DisplayName("POST /api/v1/products")
-    public void shouldSaveProduct() throws Exception{
+    public void shouldSaveProduct() throws Exception {
 
         CreateProductDTO data = new CreateProductDTO("Test", "test", 25.05, "15cm");
         String json = new ObjectMapper().writeValueAsString(data);
-        Product product = Product.builder()
-        .id(UUID.randomUUID())
-        .title("Test")
-        .description("test")
-        .cores(Arrays.asList("Azul", "verde"))
-        .build();
+        
+        Product product = ProductFactory.getInstance();
 
         BDDMockito.given(productService.save(Mockito.any(CreateProductDTO.class))).willReturn(product);
 
