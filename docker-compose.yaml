@@ -1,7 +1,7 @@
 services:
   calendula_db:
     container_name: calendula_db
-    image: mongo:lastest
+    image: mongo:6.0
     ports:
       - ${DB_PORT}:${DB_PORT}
     environment:

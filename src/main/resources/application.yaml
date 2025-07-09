@@ -3,5 +3,5 @@ spring:
         name: calendula_api
     data:
         mongodb:
-            uri: ${MONGO_URI:mongodb://root:root@localhost:27017/calendula}
-            authentication-database: ${DB_NAME:calendula}
+            uri: ${MONGO_URI:mongodb://root:root@localhost:27017/calendula?authSource=admin}
+            authentication-database: ${DB_NAME:admin}
