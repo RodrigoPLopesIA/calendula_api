@@ -39,10 +39,10 @@ public class ProductControllerTest {
     @DisplayName("POST /api/v1/products")
     public void shouldSaveProduct() throws Exception {
 
-        CreateProductDTO data = new CreateProductDTO("Test", "test", 25.05, "15cm");
+        CreateProductDTO data = new CreateProductDTO("Test 2", "test", Arrays.asList("Azul", "Verde"), 25.50);
         String json = new ObjectMapper().writeValueAsString(data);
         
-        Product product = ProductFactory.getInstance();
+        Product product = ProductFactory.getInstance(data);
 
         BDDMockito.given(productService.save(Mockito.any(CreateProductDTO.class))).willReturn(product);
 
