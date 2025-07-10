@@ -15,11 +15,19 @@ import jakarta.servlet.http.HttpServletRequest;
 public class ControllerHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorMessageDTO> method(MethodArgumentNotValidException ex, HttpServletRequest request, BindingResult results) {
+    public ResponseEntity<ErrorMessageDTO> methodArgumentNotValidException(MethodArgumentNotValidException ex, HttpServletRequest request, BindingResult results) {
         
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(new ErrorMessageDTO(request.getServletPath(), "Arguments invalid!", HttpStatus.BAD_REQUEST, results));
+    }
+
+
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<ErrorMessageDTO> businessException(BusinessException ex, HttpServletRequest request){
+
+
+        return ResponseEntity.badRequest().body(new ErrorMessageDTO(request.getServletPath(), ex.getMessage(), HttpStatus.BAD_REQUEST));
     }
 }

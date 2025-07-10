@@ -2,10 +2,12 @@ package br.com.rodrigoplopesdev.calendula_api.controllers;
 
 import br.com.rodrigoplopesdev.calendula_api.dtos.CreateProductDTO;
 import br.com.rodrigoplopesdev.calendula_api.dtos.ProductDTO;
+import br.com.rodrigoplopesdev.calendula_api.exceptions.BusinessException;
 import br.com.rodrigoplopesdev.calendula_api.models.Product;
 import br.com.rodrigoplopesdev.calendula_api.patterns.factory.ProductFactory;
 import br.com.rodrigoplopesdev.calendula_api.services.ProductService;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Arrays;
@@ -83,5 +85,24 @@ public class ProductControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.errors.price").value(Matchers.any(String.class)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.errors.colors").value(Matchers.any(String.class)));
 
+    }
+
+
+    @Test
+    @DisplayName("Product Service -> should throw an error when attempting to create a product with a duplicate title")
+    public void shouldThrowErrorWhenCreatingProductWithDuplicateTitle() throws Exception{
+        CreateProductDTO data = new CreateProductDTO("Test", "test", Arrays.asList("Azul", "Verde"), 25.50);
+        String json = new ObjectMapper().writeValueAsString(data);
+
+        BDDMockito.given(productService.save(data)).willThrow(new BusinessException("Product already registered"));
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .post("/api/v1/products")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json);
+
+
+                mvc.perform(request).andExpect(MockMvcResultMatchers.status().isBadRequest());
+        
     }
 }
