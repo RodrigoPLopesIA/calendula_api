@@ -38,4 +38,6 @@ public class ProductServiceTest {
         Assertions.assertThat(result.getId()).isNotNull();
         Assertions.assertThat(result.getTitle()).isEqualTo(instance.getTitle());
     }
+
+    
 }
