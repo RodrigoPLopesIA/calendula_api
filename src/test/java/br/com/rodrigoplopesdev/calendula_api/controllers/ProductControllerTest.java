@@ -65,7 +65,7 @@ public class ProductControllerTest {
         }
 
         @Test
-        @DisplayName("Product Service -> should throw a exception ")
+        @DisplayName("POST /api/v1/products -> should throw a exception ")
         public void shouldThrowAExceptionWhenCreateAProduct() throws Exception {
 
                 CreateProductDTO data = new CreateProductDTO(null, null, null, null);
@@ -93,7 +93,7 @@ public class ProductControllerTest {
         }
 
         @Test
-        @DisplayName("Product Service -> should throw an error when attempting to create a product with a duplicate title")
+        @DisplayName("POST /api/v1/products -> should throw an error when attempting to create a product with a duplicate title")
         public void shouldThrowErrorWhenCreatingProductWithDuplicateTitle() throws Exception {
                 CreateProductDTO data = new CreateProductDTO("Test", "test", Arrays.asList("Azul", "Verde"), 25.50);
                 String json = new ObjectMapper().writeValueAsString(data);
