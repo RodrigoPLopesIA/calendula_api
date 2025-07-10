@@ -11,17 +11,19 @@ import lombok.Getter;
 @Getter
 public class ErrorMessageDTO {
 
+    private String path;
     private String message;
     private HttpStatus status;
     private Map<String, String> errors = new HashMap<>();
 
-    public ErrorMessageDTO(String message, HttpStatus status) {
+    public ErrorMessageDTO(String path, String message, HttpStatus status) {
+        this.path = path;
         this.message = message;
         this.status = status;
     }
 
-    public ErrorMessageDTO(String message, HttpStatus status, BindingResult result) {
-        this(message, status);
+    public ErrorMessageDTO(String path, String message, HttpStatus status, BindingResult result) {
+        this(path, message, status);
         this.addErrors(result);
     }
 

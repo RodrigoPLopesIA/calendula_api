@@ -20,6 +20,6 @@ public class ControllerHandler {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(new ErrorMessageDTO("Arguments invalid!", HttpStatus.BAD_REQUEST, results));
+                .body(new ErrorMessageDTO(request.getServletPath(), "Arguments invalid!", HttpStatus.BAD_REQUEST, results));
     }
 }

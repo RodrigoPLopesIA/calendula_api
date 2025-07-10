@@ -75,6 +75,7 @@ public class ProductControllerTest {
                 .content(json);
 
         mvc.perform(request).andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("path", Matchers.any(String.class)))
                 .andExpect(MockMvcResultMatchers.jsonPath("message", Matchers.any(String.class)))
                 .andExpect(MockMvcResultMatchers.jsonPath("status", Matchers.any(String.class)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.errors.title").value(Matchers.any(String.class)))
