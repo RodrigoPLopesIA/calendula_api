@@ -8,4 +8,6 @@ import br.com.rodrigoplopesdev.calendula_api.models.Product;
 
 public interface ProductRepository extends MongoRepository<Product, String> {
     Optional<Product> findByTitle(String title);
+
+    Boolean existsByTitle(String title);
 }

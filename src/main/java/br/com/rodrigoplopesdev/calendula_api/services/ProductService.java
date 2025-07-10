@@ -8,8 +8,10 @@ import br.com.rodrigoplopesdev.calendula_api.exceptions.BusinessException;
 import br.com.rodrigoplopesdev.calendula_api.models.Product;
 import br.com.rodrigoplopesdev.calendula_api.patterns.factory.ProductFactory;
 import br.com.rodrigoplopesdev.calendula_api.repositories.ProductRepository;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class ProductService {
 
     @Autowired
@@ -17,16 +19,18 @@ public class ProductService {
 
     public Product save(CreateProductDTO product) {
         Product instance = ProductFactory.getInstance(product);
-
-        this.findByTitle(instance.getId());
-
+        log.info("Product Service -> {}", instance.getTitle());
+        
+        if(this.productRepository.existsByTitle(instance.getTitle())){
+            throw new BusinessException("Product already registered");
+        }  
         return this.productRepository.save(instance);
     }
 
-    public Product findByTitle(String title) {
-        return this.productRepository.findByTitle(title)
-                .orElseThrow(() -> new BusinessException("Product already registered"));
+    // public Product findByTitle(String title) {
+    //     return this.productRepository.findByTitle(title)
+    //             .orElseThrow(() -> new Entity("Product"));
 
-    }
+    // }
 
 }

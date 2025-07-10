@@ -35,74 +35,82 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 @AutoConfigureMockMvc
 public class ProductControllerTest {
 
-    @Autowired
-    private MockMvc mvc;
+        @Autowired
+        private MockMvc mvc;
 
-    @MockBean
-    private ProductService productService;
+        @MockBean
+        private ProductService productService;
 
-    @Test
-    @DisplayName("POST /api/v1/products")
-    public void shouldSaveProduct() throws Exception {
+        @Test
+        @DisplayName("POST /api/v1/products")
+        public void shouldSaveProduct() throws Exception {
 
-        CreateProductDTO data = new CreateProductDTO("Test", "test", Arrays.asList("Azul", "Verde"), 25.50);
-        String json = new ObjectMapper().writeValueAsString(data);
+                Product product = ProductFactory.getInstance(new ProductDTO("722dc867-ea3d-40a5-936d-70e29e830b99",
+                                "Test", "test", Arrays.asList("Azul", "Verde"), 25.50));
 
-        Product product = ProductFactory.getInstance(data);
+                String json = new ObjectMapper().writeValueAsString(product);
 
-        BDDMockito.given(productService.save(Mockito.any(CreateProductDTO.class))).willReturn(product);
+                BDDMockito.given(productService.save(Mockito.any(CreateProductDTO.class))).willReturn(product);
 
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .post("/api/v1/products")
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(json);
+                MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                                .post("/api/v1/products")
+                                .accept(MediaType.APPLICATION_JSON)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(json);
 
-        mvc.perform(request).andExpect(MockMvcResultMatchers.status().isCreated())
-                .andExpect(MockMvcResultMatchers.jsonPath("id").value("722dc867-ea3d-40a5-936d-70e29e830b99"))
-                .andExpect(MockMvcResultMatchers.jsonPath("title").value("Test"));
-    }
+                mvc.perform(request).andExpect(MockMvcResultMatchers.status().isCreated())
+                                .andExpect(MockMvcResultMatchers.jsonPath("id")
+                                                .value("722dc867-ea3d-40a5-936d-70e29e830b99"))
+                                .andExpect(MockMvcResultMatchers.jsonPath("title").value("Test"));
+        }
 
-    @Test
-    @DisplayName("Product Service -> should throw a exception ")
-    public void shouldThrowAExceptionWhenCreateAProduct() throws Exception {
+        @Test
+        @DisplayName("Product Service -> should throw a exception ")
+        public void shouldThrowAExceptionWhenCreateAProduct() throws Exception {
 
-        CreateProductDTO data = new CreateProductDTO(null, null, null, null);
-        String json = new ObjectMapper().writeValueAsString(data);
+                CreateProductDTO data = new CreateProductDTO(null, null, null, null);
+                String json = new ObjectMapper().writeValueAsString(data);
 
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .post("/api/v1/products")
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(json);
+                MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                                .post("/api/v1/products")
+                                .accept(MediaType.APPLICATION_JSON)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(json);
 
-        mvc.perform(request).andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.jsonPath("path", Matchers.any(String.class)))
-                .andExpect(MockMvcResultMatchers.jsonPath("message", Matchers.any(String.class)))
-                .andExpect(MockMvcResultMatchers.jsonPath("status", Matchers.any(String.class)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.errors.title").value(Matchers.any(String.class)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.errors.description").value(Matchers.any(String.class)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.errors.price").value(Matchers.any(String.class)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.errors.colors").value(Matchers.any(String.class)));
+                mvc.perform(request).andExpect(MockMvcResultMatchers.status().isBadRequest())
+                                .andExpect(MockMvcResultMatchers.jsonPath("path", Matchers.any(String.class)))
+                                .andExpect(MockMvcResultMatchers.jsonPath("message", Matchers.any(String.class)))
+                                .andExpect(MockMvcResultMatchers.jsonPath("status", Matchers.any(String.class)))
+                                .andExpect(MockMvcResultMatchers.jsonPath("$.errors.title")
+                                                .value(Matchers.any(String.class)))
+                                .andExpect(MockMvcResultMatchers.jsonPath("$.errors.description")
+                                                .value(Matchers.any(String.class)))
+                                .andExpect(MockMvcResultMatchers.jsonPath("$.errors.price")
+                                                .value(Matchers.any(String.class)))
+                                .andExpect(MockMvcResultMatchers.jsonPath("$.errors.colors")
+                                                .value(Matchers.any(String.class)));
 
-    }
+        }
 
+        @Test
+        @DisplayName("Product Service -> should throw an error when attempting to create a product with a duplicate title")
+        public void shouldThrowErrorWhenCreatingProductWithDuplicateTitle() throws Exception {
+                CreateProductDTO data = new CreateProductDTO("Test", "test", Arrays.asList("Azul", "Verde"), 25.50);
+                String json = new ObjectMapper().writeValueAsString(data);
 
-    @Test
-    @DisplayName("Product Service -> should throw an error when attempting to create a product with a duplicate title")
-    public void shouldThrowErrorWhenCreatingProductWithDuplicateTitle() throws Exception{
-        CreateProductDTO data = new CreateProductDTO("Test", "test", Arrays.asList("Azul", "Verde"), 25.50);
-        String json = new ObjectMapper().writeValueAsString(data);
+                BDDMockito.given(productService.save(data))
+                                .willThrow(new BusinessException("Product already registered"));
+                MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                                .post("/api/v1/products")
+                                .accept(MediaType.APPLICATION_JSON)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(json);
 
-        BDDMockito.given(productService.save(data)).willThrow(new BusinessException("Product already registered"));
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .post("/api/v1/products")
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(json);
+                mvc.perform(request).andExpect(MockMvcResultMatchers.status().isBadRequest())
+                                .andExpect(MockMvcResultMatchers.jsonPath("path", Matchers.any(String.class)))
+                                .andExpect(MockMvcResultMatchers.jsonPath("message", Matchers.any(String.class)))
+                                .andExpect(MockMvcResultMatchers.jsonPath("status", Matchers.any(String.class)))
+                                .andExpect(MockMvcResultMatchers.jsonPath("errors").exists());
 
-
-                mvc.perform(request).andExpect(MockMvcResultMatchers.status().isBadRequest());
-        
-    }
+        }
 }
