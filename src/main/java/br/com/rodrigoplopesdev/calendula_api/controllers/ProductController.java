@@ -15,6 +15,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.net.URI;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 @RequestMapping("/api/v1/products")
@@ -30,5 +34,11 @@ public class ProductController {
         
         return ResponseEntity.created(uri).body(new ProductDTO(product));
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity getMethodName(@PathVariable String id) {
+        return ResponseEntity.ok().build();
+    }
+    
 
 }
