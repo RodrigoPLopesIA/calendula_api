@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.internal.matchers.Matches;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -74,7 +75,12 @@ public class ProductControllerTest {
                 .content(json);
 
         mvc.perform(request).andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.jsonPath("errors", Matchers.hasSize(4)));
+                .andExpect(MockMvcResultMatchers.jsonPath("message", Matchers.any(String.class)))
+                .andExpect(MockMvcResultMatchers.jsonPath("status", Matchers.any(String.class)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors.title").value(Matchers.any(String.class)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors.description").value(Matchers.any(String.class)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors.price").value(Matchers.any(String.class)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors.colors").value(Matchers.any(String.class)));
 
     }
 }

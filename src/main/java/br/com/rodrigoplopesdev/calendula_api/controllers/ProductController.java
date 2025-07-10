@@ -4,6 +4,7 @@ import br.com.rodrigoplopesdev.calendula_api.dtos.CreateProductDTO;
 import br.com.rodrigoplopesdev.calendula_api.dtos.ProductDTO;
 import br.com.rodrigoplopesdev.calendula_api.models.Product;
 import br.com.rodrigoplopesdev.calendula_api.services.ProductService;
+import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,7 +24,7 @@ public class ProductController {
     private ProductService productService;
 
     @PostMapping
-    public ResponseEntity<ProductDTO> create(@RequestBody CreateProductDTO data, UriComponentsBuilder builderUri) {
+    public ResponseEntity<ProductDTO> create(@Valid @RequestBody CreateProductDTO data, UriComponentsBuilder builderUri) {
         Product product = this.productService.save(data);
         URI uri = builderUri.fromUriString("api/v1/products/{id}").buildAndExpand(product.getId()).toUri();
         
