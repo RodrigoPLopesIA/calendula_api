@@ -3,6 +3,7 @@ package br.com.rodrigoplopesdev.calendula_api.controllers;
 import br.com.rodrigoplopesdev.calendula_api.dtos.CreateProductDTO;
 import br.com.rodrigoplopesdev.calendula_api.dtos.ProductDTO;
 import br.com.rodrigoplopesdev.calendula_api.exceptions.BusinessException;
+import br.com.rodrigoplopesdev.calendula_api.exceptions.EntityNotFoundException;
 import br.com.rodrigoplopesdev.calendula_api.models.Product;
 import br.com.rodrigoplopesdev.calendula_api.patterns.factory.ProductFactory;
 import br.com.rodrigoplopesdev.calendula_api.services.ProductService;
@@ -137,6 +138,29 @@ public class ProductControllerTest {
                                 .andExpect(MockMvcResultMatchers.jsonPath("title", Matchers.any(String.class)))
                                 .andExpect(MockMvcResultMatchers.jsonPath("description", Matchers.any(String.class)))
                                 .andExpect(MockMvcResultMatchers.jsonPath("colors", Matchers.notNullValue()));
+
+        }
+
+        @Test
+        @DisplayName("GET /api/v1/products -> should return a error if product not found")
+        public void shouldReturnErrorWhenProductNotFound() throws Exception {
+
+                String id = "12345789132";
+                ProductDTO response = new ProductDTO("1234879", "Test", "testestset", List.of("Azul"), 25.06);
+                String json = new ObjectMapper().writeValueAsString(response);
+                Product product = ProductFactory.getInstance(response);
+
+                BDDMockito.given(productService.findById(Mockito.anyString())).willThrow(new EntityNotFoundException("Product not found with 12345789132"));
+
+                MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/api/v1/products/{id}", id)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(json);
+                
+
+                mvc.perform(request).andExpect(MockMvcResultMatchers.status().isNotFound())
+                                .andExpect(MockMvcResultMatchers.jsonPath("path", Matchers.any(String.class)))
+                                .andExpect(MockMvcResultMatchers.jsonPath("message", Matchers.any(String.class)))
+                                .andExpect(MockMvcResultMatchers.jsonPath("status", Matchers.any(String.class)));
 
         }
 

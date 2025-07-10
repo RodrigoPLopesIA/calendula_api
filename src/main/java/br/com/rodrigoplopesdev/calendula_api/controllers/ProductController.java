@@ -29,10 +29,9 @@ public class ProductController {
     private ProductService productService;
 
     @PostMapping
-    public ResponseEntity<ProductDTO> create(@Valid @RequestBody CreateProductDTO data,
-            UriComponentsBuilder builderUri) {
+    public ResponseEntity<ProductDTO> create(@Valid @RequestBody CreateProductDTO data) {
         Product product = this.productService.save(data);
-        URI uri = builderUri.fromUriString("api/v1/products/{id}").buildAndExpand(product.getId()).toUri();
+        URI uri = UriComponentsBuilder.fromUriString("api/v1/products/{id}").buildAndExpand(product.getId()).toUri();
 
         return ResponseEntity.created(uri).body(new ProductDTO(product));
     }
