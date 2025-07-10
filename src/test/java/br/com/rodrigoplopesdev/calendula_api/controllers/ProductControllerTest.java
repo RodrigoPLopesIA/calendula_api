@@ -11,6 +11,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 import org.hamcrest.Matcher;
@@ -114,17 +115,25 @@ public class ProductControllerTest {
 
         }
 
-
         @Test
         @DisplayName("GET /api/v1/products -> should return a product by id")
-        public void shouldReturnBookById() throws Exception{
-                String id = "12345789132";
-                MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/api/v1/products/{id}", id)
-                                .contentType(MediaType.APPLICATION_JSON);;
+        public void shouldReturnBookById() throws Exception {
 
+                String id = "12345789132";
+                ProductDTO response = new ProductDTO("1234879", "Test", "testestset", List.of("Azul"), 25.06);
+                String json = new ObjectMapper().writeValueAsString(response);
+
+                MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/api/v1/products/{id}", id)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(json);
+                ;
 
                 mvc.perform(request)
-                .andExpect(MockMvcResultMatchers.status().isOk());
+                                .andExpect(MockMvcResultMatchers.status().isOk())
+                                .andExpect(MockMvcResultMatchers.jsonPath("id", Matchers.any(String.class)))
+                                .andExpect(MockMvcResultMatchers.jsonPath("title", Matchers.any(String.class)))
+                                .andExpect(MockMvcResultMatchers.jsonPath("description", Matchers.any(String.class)))
+                                .andExpect(MockMvcResultMatchers.jsonPath("colors", Matchers.notNullValue()));
 
         }
 
