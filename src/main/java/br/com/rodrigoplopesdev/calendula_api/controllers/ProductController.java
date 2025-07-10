@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
-
 @RestController
 @RequestMapping("/api/v1/products")
 public class ProductController {
@@ -30,19 +29,18 @@ public class ProductController {
     private ProductService productService;
 
     @PostMapping
-    public ResponseEntity<ProductDTO> create(@Valid @RequestBody CreateProductDTO data, UriComponentsBuilder builderUri) {
+    public ResponseEntity<ProductDTO> create(@Valid @RequestBody CreateProductDTO data,
+            UriComponentsBuilder builderUri) {
         Product product = this.productService.save(data);
         URI uri = builderUri.fromUriString("api/v1/products/{id}").buildAndExpand(product.getId()).toUri();
-        
+
         return ResponseEntity.created(uri).body(new ProductDTO(product));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity getMethodName(@PathVariable String id) {
+    public ResponseEntity<ProductDTO> getMethodName(@PathVariable String id) {
 
-        ProductDTO response = new ProductDTO("12345789132", "asdfasdf", "asdfasdf", List.of("Azul"), 25.05);
-        return ResponseEntity.ok().body(response);
+        return ResponseEntity.ok().body(new ProductDTO(this.productService.findById(id)));
     }
-    
 
 }

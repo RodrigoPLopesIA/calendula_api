@@ -15,19 +15,28 @@ import jakarta.servlet.http.HttpServletRequest;
 public class ControllerHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorMessageDTO> methodArgumentNotValidException(MethodArgumentNotValidException ex, HttpServletRequest request, BindingResult results) {
-        
+    public ResponseEntity<ErrorMessageDTO> methodArgumentNotValidException(MethodArgumentNotValidException ex,
+            HttpServletRequest request, BindingResult results) {
+
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(new ErrorMessageDTO(request.getServletPath(), "Arguments invalid!", HttpStatus.BAD_REQUEST, results));
+                .body(new ErrorMessageDTO(request.getServletPath(), "Arguments invalid!", HttpStatus.BAD_REQUEST,
+                        results));
     }
 
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<ErrorMessageDTO> entityNotFoundException(EntityNotFoundException ex, HttpServletRequest request) {
+        return ResponseEntity
+        .status(HttpStatus.NOT_FOUND)
+        .contentType(MediaType.APPLICATION_JSON)
+        .body(new ErrorMessageDTO(request.getServletPath(), ex.getMessage(), HttpStatus.NOT_FOUND));
+    }
 
     @ExceptionHandler(BusinessException.class)
-    public ResponseEntity<ErrorMessageDTO> businessException(BusinessException ex, HttpServletRequest request){
+    public ResponseEntity<ErrorMessageDTO> businessException(BusinessException ex, HttpServletRequest request) {
 
-
-        return ResponseEntity.badRequest().body(new ErrorMessageDTO(request.getServletPath(), ex.getMessage(), HttpStatus.BAD_REQUEST));
+        return ResponseEntity.badRequest()
+                .body(new ErrorMessageDTO(request.getServletPath(), ex.getMessage(), HttpStatus.BAD_REQUEST));
     }
 }

@@ -122,11 +122,14 @@ public class ProductControllerTest {
                 String id = "12345789132";
                 ProductDTO response = new ProductDTO("1234879", "Test", "testestset", List.of("Azul"), 25.06);
                 String json = new ObjectMapper().writeValueAsString(response);
+                Product product = ProductFactory.getInstance(response);
+
+                BDDMockito.given(productService.findById(Mockito.anyString())).willReturn(product);
 
                 MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/api/v1/products/{id}", id)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(json);
-                ;
+                
 
                 mvc.perform(request)
                                 .andExpect(MockMvcResultMatchers.status().isOk())
