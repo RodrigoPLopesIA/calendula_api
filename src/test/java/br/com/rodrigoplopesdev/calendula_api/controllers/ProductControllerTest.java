@@ -113,4 +113,19 @@ public class ProductControllerTest {
                                 .andExpect(MockMvcResultMatchers.jsonPath("errors").exists());
 
         }
+
+
+        @Test
+        @DisplayName("GET /api/v1/products -> should return a product by id")
+        public void shouldReturnBookById() throws Exception{
+                String id = "12345789132";
+                MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/api/v1/products/{id}", id)
+                                .contentType(MediaType.APPLICATION_JSON);;
+
+
+                mvc.perform(request)
+                .andExpect(MockMvcResultMatchers.status().isOk());
+
+        }
+
 }
