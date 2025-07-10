@@ -1,6 +1,7 @@
 package br.com.rodrigoplopesdev.calendula_api.services;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -14,6 +15,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import br.com.rodrigoplopesdev.calendula_api.dtos.CreateProductDTO;
 import br.com.rodrigoplopesdev.calendula_api.dtos.ProductDTO;
 import br.com.rodrigoplopesdev.calendula_api.exceptions.BusinessException;
+import br.com.rodrigoplopesdev.calendula_api.exceptions.EntityNotFoundException;
 import br.com.rodrigoplopesdev.calendula_api.models.Product;
 import br.com.rodrigoplopesdev.calendula_api.patterns.factory.ProductFactory;
 import br.com.rodrigoplopesdev.calendula_api.repositories.ProductRepository;
@@ -30,10 +32,10 @@ public class ProductServiceTest {
     @Test
     @DisplayName("Product Service -> should create a new product")
     public void shouldCreateNewProduct() {
-        
+
         CreateProductDTO data = new CreateProductDTO("Test", "test", Arrays.asList("Azul", "Verde"), 25.50);
         ProductDTO responseDTO = new ProductDTO("asdasdasd", "Test", "test", Arrays.asList("Azul", "Verde"), 25.50);
-        
+
         Product instance = ProductFactory.getInstance(data);
         Product response = ProductFactory.getInstance(responseDTO);
 
@@ -57,6 +59,43 @@ public class ProductServiceTest {
 
         Assertions.assertThat(exception).isInstanceOf(BusinessException.class);
         Mockito.verify(productRepository, Mockito.never()).save(instance);
+    }
+
+    @Test
+    @DisplayName("Product Service -> should return a product by id")
+    public void shouldReturnProductById() {
+        var id = "1234";
+        CreateProductDTO data = new CreateProductDTO("Test", "test", Arrays.asList("Azul", "Verde"), 25.50);
+        Product instance = ProductFactory.getInstance(data);
+        instance.setId(id);
+
+        Mockito.when(productRepository.findById(Mockito.anyString())).thenReturn(Optional.of(instance));
+
+        var result = productService.findById(id);
+
+        Assertions.assertThat(result).isNotNull();
+        Assertions.assertThat(result.getId()).isEqualTo("1234");
+        Assertions.assertThat(result.getTitle()).isEqualTo("Test");
+        Assertions.assertThat(result.getDescription()).isEqualTo("test");
+        Assertions.assertThat(result.getColors()).isNotEmpty();
+        Assertions.assertThat(result.getColors()).contains("Azul", "Verde");
+    }
+
+    @Test
+    @DisplayName("Product Service -> should throw EntityNotFoundException when product is not found by id")
+    public void shouldThrowNotFoundException() {
+        var id = "1234";
+        CreateProductDTO data = new CreateProductDTO("Test", "test", Arrays.asList("Azul", "Verde"), 25.50);
+        Product instance = ProductFactory.getInstance(data);
+        instance.setId(id);
+
+        Mockito.when(productRepository.findById(Mockito.anyString())).thenThrow(new EntityNotFoundException("Product not found with id: 1234"));
+
+        var result = Assertions.catchThrowable(() -> productService.findById(id));
+
+        Assertions.assertThat(result).isInstanceOf(EntityNotFoundException.class);
+        Assertions.assertThat(result.getMessage()).isEqualTo("Product not found with id: 1234");
+
     }
 
 }

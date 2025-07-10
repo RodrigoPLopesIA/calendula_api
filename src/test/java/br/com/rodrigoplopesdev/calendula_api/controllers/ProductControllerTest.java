@@ -148,7 +148,6 @@ public class ProductControllerTest {
                 String id = "12345789132";
                 ProductDTO response = new ProductDTO("1234879", "Test", "testestset", List.of("Azul"), 25.06);
                 String json = new ObjectMapper().writeValueAsString(response);
-                Product product = ProductFactory.getInstance(response);
 
                 BDDMockito.given(productService.findById(Mockito.anyString())).willThrow(new EntityNotFoundException("Product not found with 12345789132"));
 
