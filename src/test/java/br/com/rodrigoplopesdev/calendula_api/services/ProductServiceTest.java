@@ -1,5 +1,7 @@
 package br.com.rodrigoplopesdev.calendula_api.services;
 
+import static org.mockito.Mockito.never;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -13,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.util.Assert;
 
 import br.com.rodrigoplopesdev.calendula_api.dtos.CreateProductDTO;
 import br.com.rodrigoplopesdev.calendula_api.dtos.ProductDTO;
@@ -91,7 +94,8 @@ public class ProductServiceTest {
         Product instance = ProductFactory.getInstance(data);
         instance.setId(id);
 
-        Mockito.when(productRepository.findById(Mockito.anyString())).thenThrow(new EntityNotFoundException("Product not found with id: 1234"));
+        Mockito.when(productRepository.findById(Mockito.anyString()))
+                .thenThrow(new EntityNotFoundException("Product not found with id: 1234"));
 
         var result = Assertions.catchThrowable(() -> productService.findById(id));
 
@@ -102,7 +106,7 @@ public class ProductServiceTest {
 
     @Test
     @DisplayName("Product Service -> should update a product")
-    public void shouldUpdateProduct(){
+    public void shouldUpdateProduct() {
 
         String id = "3e733c92-a219-4d50-a94c-e3c700b63a5a";
         CreateProductDTO data = new CreateProductDTO("Test", "test", List.of("Azul"), 25.5);
@@ -114,8 +118,29 @@ public class ProductServiceTest {
 
         var result = productService.update(id, data);
 
+        Assertions.assertThat(result).isNotNull();
+    }
+
+    @Test
+    @DisplayName("Product Service -> should Entity Not Found Exception When update a product")
+    public void shouldThrowEntityNotFoundExceptionWhenUpdateProduct() {
+
+        String id = "3e733c92-a219-4d50-a94c-e3c700b63a5a";
+        CreateProductDTO data = new CreateProductDTO("Test", "test", List.of("Azul"), 25.5);
+        Product instance = ProductFactory.getInstance(data);
+        instance.setId(id);
+
+        Mockito.when(productRepository.findById(Mockito.anyString()))
+                .thenThrow(new EntityNotFoundException(String.format("Product with id $s not found.", id)));
+
+        var result = Assertions.catchException(() -> productService.update(id, data));
 
         Assertions.assertThat(result).isNotNull();
+        Assertions.assertThat(result).isInstanceOf(EntityNotFoundException.class);
+        Assertions.assertThat(result.getMessage())
+                .isEqualTo(String.format("Product with id $s not found.", id));
+
+        Mockito.verify(productRepository, never()).save(instance);
     }
 
 }
