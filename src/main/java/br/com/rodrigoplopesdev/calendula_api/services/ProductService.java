@@ -33,9 +33,15 @@ public class ProductService {
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Product not found with %s", id)));
     }
 
-    public Object update(String id, CreateProductDTO data) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'update'");
+    public Product update(String id, CreateProductDTO data) {
+        var product = this.productRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("Product with id $s not found.", id)));
+
+        product = Product.builder().id(id).title(data.title()).colors(data.colors())
+                .description(data.description()).build();
+
+        
+        return this.productRepository.save(product);
     }
 
 }
