@@ -37,10 +37,10 @@ public class ProductService {
         var product = this.productRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Product with id $s not found.", id)));
 
-        product = Product.builder().id(id).title(data.title()).colors(data.colors())
-                .description(data.description()).build();
+        product.setTitle(data.title());
+        product.setDescription(data.description());
+        product.setColors(data.colors());
 
-        
         return this.productRepository.save(product);
     }
 
