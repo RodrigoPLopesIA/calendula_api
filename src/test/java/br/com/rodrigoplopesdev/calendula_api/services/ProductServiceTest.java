@@ -20,6 +20,7 @@ import org.springframework.util.Assert;
 import br.com.rodrigoplopesdev.calendula_api.dtos.CreateProductDTO;
 import br.com.rodrigoplopesdev.calendula_api.dtos.ProductDTO;
 import br.com.rodrigoplopesdev.calendula_api.exceptions.BusinessException;
+import br.com.rodrigoplopesdev.calendula_api.exceptions.DuplicatedTitleException;
 import br.com.rodrigoplopesdev.calendula_api.exceptions.EntityNotFoundException;
 import br.com.rodrigoplopesdev.calendula_api.models.Product;
 import br.com.rodrigoplopesdev.calendula_api.patterns.factory.ProductFactory;
@@ -141,6 +142,31 @@ public class ProductServiceTest {
                 .isEqualTo(String.format("Product with id $s not found.", id));
 
         Mockito.verify(productRepository, never()).save(instance);
+    }
+
+    @Test
+    @DisplayName("Product Service -> should Unique Violation Exception When update a product")
+    public void shouldThrowUniqueViolateExceptionWhenUpdateProduct() {
+
+        String id = "3e733c92-a219-4d50-a94c-e3c700b63a5a";
+        CreateProductDTO data = new CreateProductDTO("Test2", "test", List.of("Azul"), 25.5);
+        Product existingProduct = ProductFactory.getInstance(new CreateProductDTO("Test2", "test", List.of("Azul"), 25.5));
+        existingProduct.setId(id);
+
+        Mockito.when(productRepository.findById(Mockito.anyString()))
+                .thenReturn(Optional.of(existingProduct));
+                
+        Mockito.when(productRepository.existsByTitle(data.title())).thenReturn(true);
+
+
+        var result = Assertions.catchException(() -> productService.update(id, data));
+
+        Assertions.assertThat(result).isNotNull();
+        Assertions.assertThat(result).isInstanceOf(DuplicatedTitleException.class);
+        Assertions.assertThat(result.getMessage())
+                .isEqualTo(String.format("Product with title $s already exists.", id));
+
+        Mockito.verify(productRepository, never()).save(existingProduct);
     }
 
 }
