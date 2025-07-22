@@ -170,4 +170,21 @@ public class ProductServiceTest {
         Mockito.verify(productRepository, never()).save(existingProduct);
     }
 
+    @Test
+    @DisplayName("Product Service -> should delete a product")
+    public void shouldDeleteProduct() {
+        String id = "3e733c92-a219-4d50-a94c-e3c700b63a5a";
+        Product product = Product.builder().id(id).title("title").description("sasfa").colors(List.of("Azul"))
+                .images(List.of("images")).build();
+
+        Mockito.when(productRepository.findById(Mockito.anyString()))
+                .thenReturn(Optional.of(product));
+
+        var result = productService.delete(id);
+
+        Assertions.assertThat(result).isNotNull();
+
+        Mockito.verify(productRepository, never()).delete(product);
+    }
+
 }
