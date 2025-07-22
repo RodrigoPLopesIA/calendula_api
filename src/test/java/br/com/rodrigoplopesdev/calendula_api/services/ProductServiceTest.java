@@ -150,7 +150,7 @@ public class ProductServiceTest {
 
         String id = "3e733c92-a219-4d50-a94c-e3c700b63a5a";
         CreateProductDTO data = new CreateProductDTO("Test2", "test", List.of("Azul"), 25.5);
-        Product existingProduct = ProductFactory.getInstance(new CreateProductDTO("Test2", "test", List.of("Azul"), 25.5));
+        Product existingProduct = ProductFactory.getInstance(data);
         existingProduct.setId(id);
 
         Mockito.when(productRepository.findById(Mockito.anyString()))
