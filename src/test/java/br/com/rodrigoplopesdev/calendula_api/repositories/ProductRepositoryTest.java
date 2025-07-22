@@ -3,19 +3,17 @@ package br.com.rodrigoplopesdev.calendula_api.repositories;
 import java.util.List;
 
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.context.annotation.Import;
 
+import br.com.rodrigoplopesdev.calendula_api.config.MongoConfig;
 import br.com.rodrigoplopesdev.calendula_api.models.Product;
 
-@ExtendWith(SpringExtension.class)
 @DataMongoTest
+@Import(MongoConfig.class)
 public class ProductRepositoryTest {
 
     @Autowired
@@ -32,6 +30,7 @@ public class ProductRepositoryTest {
                 .builder()
                 .title("test")
                 .description("testset")
+                .images(List.of("imagem1", "imagem2"))
                 .colors(List.of("Azul", "Green")).price(25.02).build();
 
         Product saved = productRepository.save(product);
