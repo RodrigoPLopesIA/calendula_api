@@ -3,6 +3,7 @@ package br.com.rodrigoplopesdev.calendula_api.controllers;
 import br.com.rodrigoplopesdev.calendula_api.dtos.CreateProductDTO;
 import br.com.rodrigoplopesdev.calendula_api.dtos.ProductDTO;
 import br.com.rodrigoplopesdev.calendula_api.exceptions.BusinessException;
+import br.com.rodrigoplopesdev.calendula_api.exceptions.DuplicatedTitleException;
 import br.com.rodrigoplopesdev.calendula_api.exceptions.EntityNotFoundException;
 import br.com.rodrigoplopesdev.calendula_api.models.Product;
 import br.com.rodrigoplopesdev.calendula_api.patterns.factory.ProductFactory;
@@ -11,6 +12,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Arrays;
 import java.util.List;
+
+import org.assertj.core.api.Assertions;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,6 +29,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 @WebMvcTest
 @AutoConfigureMockMvc
@@ -178,6 +182,50 @@ public class ProductControllerTest {
                                 .andExpect(MockMvcResultMatchers.jsonPath("title", Matchers.any(String.class)))
                                 .andExpect(MockMvcResultMatchers.jsonPath("description", Matchers.any(String.class)))
                                 .andExpect(MockMvcResultMatchers.jsonPath("colors", Matchers.notNullValue()));
+
+        }
+
+        @Test
+        @DisplayName("PUT /api/v1/products -> should throw an error when attempting to update a product with a null values")
+        public void shouldThrowErrorWhenUpdatingProductWithNullValues() throws Exception {
+                var id = "687fe480e52d11d99eba49b1";
+                CreateProductDTO data = new CreateProductDTO("", "", null, null);
+                String json = new ObjectMapper().writeValueAsString(data);
+
+                MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                                .put("/api/v1/products/".concat(id))
+                                .accept(MediaType.APPLICATION_JSON)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(json);
+
+                mvc.perform(request).andExpect(MockMvcResultMatchers.status().isBadRequest())
+                                .andExpect(MockMvcResultMatchers.jsonPath("path", Matchers.any(String.class)))
+                                .andExpect(MockMvcResultMatchers.jsonPath("message", Matchers.any(String.class)))
+                                .andExpect(MockMvcResultMatchers.jsonPath("status", Matchers.any(String.class)))
+                                .andExpect(MockMvcResultMatchers.jsonPath("errors").exists());
+
+        }
+
+        @Test
+        @DisplayName("PUT /api/v1/products -> should throw an error when attempting to update a product with a duplicated title")
+        public void shouldThrowErrorWhenUpdatingProductWithDuplicatedTitle() throws Exception {
+                var id = "687fe480e52d11d99eba49b1";
+                CreateProductDTO data = new CreateProductDTO("test2", "test2", List.of("Azul"), 25.50);
+                String json = new ObjectMapper().writeValueAsString(data);
+
+                BDDMockito.given(productService.update(id, data)).willThrow(new DuplicatedTitleException(
+                                String.format("Product with this title %s already exists.", data.title())));
+                MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                                .put("/api/v1/products/".concat(id))
+                                .accept(MediaType.APPLICATION_JSON)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(json);
+
+                mvc.perform(request).andExpect(MockMvcResultMatchers.status().isBadRequest())
+                                .andExpect(MockMvcResultMatchers.jsonPath("path", Matchers.any(String.class)))
+                                .andExpect(MockMvcResultMatchers.jsonPath("message", Matchers.any(String.class)))
+                                .andExpect(MockMvcResultMatchers.jsonPath("status", Matchers.any(String.class)))
+                                .andExpect(MockMvcResultMatchers.jsonPath("errors").exists());
 
         }
 
