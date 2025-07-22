@@ -20,6 +20,8 @@ import java.util.List;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PutMapping;
+
 
 @RestController
 @RequestMapping("/api/v1/products")
@@ -37,9 +39,14 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProductDTO> getMethodName(@PathVariable String id) {
+    public ResponseEntity<ProductDTO> show(@PathVariable String id) {
 
         return ResponseEntity.ok().body(new ProductDTO(this.productService.findById(id)));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ProductDTO> update(@PathVariable String id, @Valid @RequestBody CreateProductDTO data) {
+        return ResponseEntity.ok().body(new ProductDTO(this.productService.update(id, data)));
     }
 
 }
