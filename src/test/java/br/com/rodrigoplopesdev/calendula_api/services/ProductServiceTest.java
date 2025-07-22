@@ -110,6 +110,7 @@ public class ProductServiceTest {
         instance.setId(id);
 
         Mockito.when(productRepository.findById(Mockito.anyString())).thenReturn(Optional.of(instance));
+        Mockito.when(productRepository.save(instance)).thenReturn(instance);
 
         var result = productService.update(id, data);
 
