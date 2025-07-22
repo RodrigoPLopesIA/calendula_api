@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import br.com.rodrigoplopesdev.calendula_api.dtos.CreateProductDTO;
 import br.com.rodrigoplopesdev.calendula_api.exceptions.BusinessException;
+import br.com.rodrigoplopesdev.calendula_api.exceptions.DuplicatedTitleException;
 import br.com.rodrigoplopesdev.calendula_api.exceptions.EntityNotFoundException;
 import br.com.rodrigoplopesdev.calendula_api.models.Product;
 import br.com.rodrigoplopesdev.calendula_api.patterns.factory.ProductFactory;
@@ -36,6 +37,13 @@ public class ProductService {
     public Product update(String id, CreateProductDTO data) {
         var product = this.productRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Product with id $s not found.", id)));
+
+        var existingProduct = this.productRepository.existsByTitle(data.title())
+                && !data.title().equals(product.getTitle());
+
+        if (existingProduct)
+            throw new DuplicatedTitleException(
+                    String.format("Product with this title %s already exists.", data.title()));
 
         product.setTitle(data.title());
         product.setDescription(data.description());
