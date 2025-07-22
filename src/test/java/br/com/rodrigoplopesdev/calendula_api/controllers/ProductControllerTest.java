@@ -111,7 +111,7 @@ public class ProductControllerTest {
         }
 
         @Test
-        @DisplayName("GET /api/v1/products -> should return a product by id")
+        @DisplayName("GET /api/v1/products/{id} -> should return a product by id")
         public void shouldReturnBookById() throws Exception {
 
                 String id = "12345789132";
@@ -136,7 +136,7 @@ public class ProductControllerTest {
         }
 
         @Test
-        @DisplayName("GET /api/v1/products -> should return a error if product not found")
+        @DisplayName("GET /api/v1/products/{id} -> should return a error if product not found")
         public void shouldReturnErrorWhenProductNotFound() throws Exception {
 
                 String id = "12345789132";
