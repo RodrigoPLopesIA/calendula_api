@@ -14,6 +14,12 @@ import jakarta.servlet.http.HttpServletRequest;
 @ControllerAdvice
 public class ControllerHandler {
 
+    @ExceptionHandler(DuplicatedTitleException.class)
+    public ResponseEntity<ErrorMessageDTO> duplicatedTitleException(DuplicatedTitleException ex, HttpServletRequest request) {
+        return ResponseEntity.badRequest()
+                .body(new ErrorMessageDTO(request.getServletPath(), ex.getMessage(), HttpStatus.BAD_REQUEST));
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorMessageDTO> methodArgumentNotValidException(MethodArgumentNotValidException ex,
             HttpServletRequest request, BindingResult results) {
@@ -26,11 +32,12 @@ public class ControllerHandler {
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<ErrorMessageDTO> entityNotFoundException(EntityNotFoundException ex, HttpServletRequest request) {
+    public ResponseEntity<ErrorMessageDTO> entityNotFoundException(EntityNotFoundException ex,
+            HttpServletRequest request) {
         return ResponseEntity
-        .status(HttpStatus.NOT_FOUND)
-        .contentType(MediaType.APPLICATION_JSON)
-        .body(new ErrorMessageDTO(request.getServletPath(), ex.getMessage(), HttpStatus.NOT_FOUND));
+                .status(HttpStatus.NOT_FOUND)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new ErrorMessageDTO(request.getServletPath(), ex.getMessage(), HttpStatus.NOT_FOUND));
     }
 
     @ExceptionHandler(BusinessException.class)
