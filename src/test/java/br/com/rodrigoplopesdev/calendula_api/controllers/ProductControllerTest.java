@@ -7,22 +7,16 @@ import br.com.rodrigoplopesdev.calendula_api.exceptions.EntityNotFoundException;
 import br.com.rodrigoplopesdev.calendula_api.models.Product;
 import br.com.rodrigoplopesdev.calendula_api.patterns.factory.ProductFactory;
 import br.com.rodrigoplopesdev.calendula_api.services.ProductService;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
-
-import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
-import org.mockito.Mock;
+
 import org.mockito.Mockito;
-import org.mockito.internal.matchers.Matches;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
