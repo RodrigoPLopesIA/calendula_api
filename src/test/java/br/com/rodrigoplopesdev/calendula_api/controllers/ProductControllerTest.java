@@ -124,7 +124,6 @@ public class ProductControllerTest {
                 MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/api/v1/products/{id}", id)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(json);
-                
 
                 mvc.perform(request)
                                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -143,17 +142,42 @@ public class ProductControllerTest {
                 ProductDTO response = new ProductDTO("1234879", "Test", "testestset", List.of("Azul"), 25.06);
                 String json = new ObjectMapper().writeValueAsString(response);
 
-                BDDMockito.given(productService.findById(Mockito.anyString())).willThrow(new EntityNotFoundException("Product not found with 12345789132"));
+                BDDMockito.given(productService.findById(Mockito.anyString()))
+                                .willThrow(new EntityNotFoundException("Product not found with 12345789132"));
 
                 MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/api/v1/products/{id}", id)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(json);
-                
 
                 mvc.perform(request).andExpect(MockMvcResultMatchers.status().isNotFound())
                                 .andExpect(MockMvcResultMatchers.jsonPath("path", Matchers.any(String.class)))
                                 .andExpect(MockMvcResultMatchers.jsonPath("message", Matchers.any(String.class)))
                                 .andExpect(MockMvcResultMatchers.jsonPath("status", Matchers.any(String.class)));
+
+        }
+
+        @Test
+        @DisplayName("PUT /api/v1/products/{id} -> should UPDATE a product by id")
+        public void shouldUpdateBookById() throws Exception {
+
+                String id = "12345789132";
+                ProductDTO response = new ProductDTO("1234879", "Test", "testestset", List.of("Azul"), 25.06);
+                String json = new ObjectMapper().writeValueAsString(response);
+                Product product = ProductFactory.getInstance(response);
+
+                BDDMockito.given(productService.update(Mockito.anyString(), Mockito.any(CreateProductDTO.class)))
+                                .willReturn(product);
+
+                MockHttpServletRequestBuilder request = MockMvcRequestBuilders.put("/api/v1/products/{id}", id)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(json);
+
+                mvc.perform(request)
+                                .andExpect(MockMvcResultMatchers.status().isOk())
+                                .andExpect(MockMvcResultMatchers.jsonPath("id", Matchers.any(String.class)))
+                                .andExpect(MockMvcResultMatchers.jsonPath("title", Matchers.any(String.class)))
+                                .andExpect(MockMvcResultMatchers.jsonPath("description", Matchers.any(String.class)))
+                                .andExpect(MockMvcResultMatchers.jsonPath("colors", Matchers.notNullValue()));
 
         }
 
