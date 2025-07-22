@@ -1,6 +1,7 @@
 package br.com.rodrigoplopesdev.calendula_api.services;
 
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 
 import java.util.Arrays;
 import java.util.List;
@@ -180,11 +181,9 @@ public class ProductServiceTest {
         Mockito.when(productRepository.findById(Mockito.anyString()))
                 .thenReturn(Optional.of(product));
 
-        var result = productService.delete(id);
+        productService.delete(id);
 
-        Assertions.assertThat(result).isNotNull();
-
-        Mockito.verify(productRepository, never()).delete(product);
+        Mockito.verify(productRepository, times(1)).delete(product);
     }
 
 }

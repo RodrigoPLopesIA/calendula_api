@@ -52,4 +52,11 @@ public class ProductService {
         return this.productRepository.save(product);
     }
 
+    public void delete(String id) {
+        var product = this.productRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("Product with id %s not exists.", id)));
+
+        this.productRepository.delete(product);
+    }
+
 }
