@@ -186,4 +186,22 @@ public class ProductServiceTest {
         Mockito.verify(productRepository, times(1)).delete(product);
     }
 
+    @Test
+    @DisplayName("Product Service -> should throw entity not found exception when try to delete a product")
+    public void shouldThrowEntityNotFoundExceptionWhenTryToDeleteProduct() {
+        String id = "3e733c92-a219-4d50-a94c-e3c700b63a5a";
+        Product product = Product.builder().id(id).title("title").description("sasfa").colors(List.of("Azul"))
+                .images(List.of("images")).build();
+
+        Mockito.when(productRepository.findById(Mockito.anyString()))
+                .thenThrow(new EntityNotFoundException(String.format("Product with id %s not exists.", id)));
+
+        var result = Assertions.catchException(() -> productService.delete(id));
+
+        Assertions.assertThat(result).isNotNull();
+        Assertions.assertThat(result).isInstanceOf(EntityNotFoundException.class);
+        Assertions.assertThat(result.getMessage()).isEqualTo(String.format("Product with id %s not exists.", id));
+        Mockito.verify(productRepository, never()).delete(product);
+    }
+
 }
