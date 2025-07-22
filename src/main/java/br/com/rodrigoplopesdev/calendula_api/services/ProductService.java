@@ -33,4 +33,9 @@ public class ProductService {
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Product not found with %s", id)));
     }
 
+    public Object update(String id, CreateProductDTO data) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'update'");
+    }
+
 }
