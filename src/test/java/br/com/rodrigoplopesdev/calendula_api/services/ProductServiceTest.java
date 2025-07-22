@@ -1,6 +1,7 @@
 package br.com.rodrigoplopesdev.calendula_api.services;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import org.assertj.core.api.Assertions;
@@ -97,6 +98,23 @@ public class ProductServiceTest {
         Assertions.assertThat(result).isInstanceOf(EntityNotFoundException.class);
         Assertions.assertThat(result.getMessage()).isEqualTo("Product not found with id: 1234");
 
+    }
+
+    @Test
+    @DisplayName("Product Service -> should update a product")
+    public void shouldUpdateProduct(){
+
+        String id = "3e733c92-a219-4d50-a94c-e3c700b63a5a";
+        CreateProductDTO data = new CreateProductDTO("Test", "test", List.of("Azul"), 25.5);
+        Product instance = ProductFactory.getInstance(data);
+        instance.setId(id);
+
+        Mockito.when(productRepository.findById(Mockito.anyString())).thenReturn(Optional.of(instance));
+
+        var result = productService.update(id, data);
+
+
+        Assertions.assertThat(result).isNotNull();
     }
 
 }
