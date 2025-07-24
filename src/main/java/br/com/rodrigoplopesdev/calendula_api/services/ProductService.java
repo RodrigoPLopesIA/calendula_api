@@ -1,5 +1,7 @@
 package br.com.rodrigoplopesdev.calendula_api.services;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -57,6 +59,10 @@ public class ProductService {
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Product with id %s not exists.", id)));
 
         this.productRepository.delete(product);
+    }
+
+    public List<Product> findAll() {
+        return productRepository.findAll();
     }
 
 }
