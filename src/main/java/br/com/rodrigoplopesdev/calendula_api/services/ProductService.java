@@ -1,13 +1,20 @@
 package br.com.rodrigoplopesdev.calendula_api.services;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import br.com.rodrigoplopesdev.calendula_api.dtos.CreateProductDTO;
+import br.com.rodrigoplopesdev.calendula_api.dtos.ProductFilterDTO;
 import br.com.rodrigoplopesdev.calendula_api.exceptions.BusinessException;
 import br.com.rodrigoplopesdev.calendula_api.exceptions.DuplicatedTitleException;
 import br.com.rodrigoplopesdev.calendula_api.exceptions.EntityNotFoundException;
@@ -22,6 +29,9 @@ public class ProductService {
 
     @Autowired
     private ProductRepository productRepository;
+
+    @Autowired
+    private MongoTemplate mongoTemplate;
 
     public Product save(CreateProductDTO product) {
         Product instance = ProductFactory.getInstance(product);
@@ -63,8 +73,52 @@ public class ProductService {
         this.productRepository.delete(product);
     }
 
-    public Page<Product> findAll(Pageable page) {
-        return productRepository.findAll(page);
+    public Page<Product> findAll(ProductFilterDTO filter, Pageable pageable) {
+        List<Criteria> criteriaList = new ArrayList<>();
+
+        // Global search (title, description, brand, etc.)
+        if (filter.search() != null && !filter.search().isBlank()) {
+            var regex = Pattern.compile(filter.search(), Pattern.CASE_INSENSITIVE);
+            criteriaList.add(new Criteria().orOperator(
+                    Criteria.where("title").regex(regex),
+                    Criteria.where("description").regex(regex),
+                    Criteria.where("brand").regex(regex)));
+        }
+
+        // Categoria
+        if (filter.category() != null && !filter.category().isBlank()) {
+            criteriaList.add(Criteria.where("category").is(filter.category()));
+        }
+
+        // Cores
+        if (filter.colors() != null && !filter.colors().isEmpty()) {
+            criteriaList.add(Criteria.where("colors").in(filter.colors()));
+        }
+
+        // Preço
+        if (filter.minPrice() != null || filter.maxPrice() != null) {
+            Criteria priceCriteria = Criteria.where("price");
+            if (filter.minPrice() != null) {
+                priceCriteria = priceCriteria.gte(filter.minPrice());
+            }
+            if (filter.maxPrice() != null) {
+                priceCriteria = priceCriteria.lte(filter.maxPrice());
+            }
+            criteriaList.add(priceCriteria);
+        }
+
+        // Combine os critérios
+        Criteria finalCriteria = new Criteria();
+        if (!criteriaList.isEmpty()) {
+            finalCriteria.andOperator(criteriaList.toArray(new Criteria[0]));
+        }
+
+        Query query = new Query(finalCriteria).with(pageable);
+
+        List<Product> products = mongoTemplate.find(query, Product.class);
+        long total = mongoTemplate.count(Query.of(query).limit(-1).skip(-1), Product.class);
+
+        return new PageImpl<>(products, pageable, total);
     }
 
 }
