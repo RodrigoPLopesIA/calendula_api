@@ -76,26 +76,25 @@ public class ProductService {
     public Page<Product> findAll(ProductFilterDTO filter, Pageable pageable) {
         List<Criteria> criteriaList = new ArrayList<>();
 
-        // Global search (title, description, brand, etc.)
         if (filter.search() != null && !filter.search().isBlank()) {
             var regex = Pattern.compile(filter.search(), Pattern.CASE_INSENSITIVE);
             criteriaList.add(new Criteria().orOperator(
                     Criteria.where("title").regex(regex),
                     Criteria.where("description").regex(regex),
-                    Criteria.where("brand").regex(regex)));
+                    Criteria.where("price").regex(regex),
+                    Criteria.where("category").regex(regex),
+                    Criteria.where("colors").regex(regex),
+                    Criteria.where("size").regex(regex)));
         }
 
-        // Categoria
         if (filter.category() != null && !filter.category().isBlank()) {
             criteriaList.add(Criteria.where("category").is(filter.category()));
         }
 
-        // Cores
         if (filter.colors() != null && !filter.colors().isEmpty()) {
             criteriaList.add(Criteria.where("colors").in(filter.colors()));
         }
 
-        // Preço
         if (filter.minPrice() != null || filter.maxPrice() != null) {
             Criteria priceCriteria = Criteria.where("price");
             if (filter.minPrice() != null) {
@@ -107,7 +106,7 @@ public class ProductService {
             criteriaList.add(priceCriteria);
         }
 
-        // Combine os critérios
+
         Criteria finalCriteria = new Criteria();
         if (!criteriaList.isEmpty()) {
             finalCriteria.andOperator(criteriaList.toArray(new Criteria[0]));
