@@ -12,12 +12,8 @@ import br.com.rodrigoplopesdev.calendula_api.services.ProductService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static org.mockito.ArgumentMatchers.any;
-
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import org.assertj.core.api.Assertions;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -28,7 +24,6 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -72,6 +67,20 @@ public class ProductControllerTest {
                                 .param("colors", "preto", "azul")
                                 .param("minPrice", "20")
                                 .param("maxPrice", "200")
+                                .contentType(MediaType.APPLICATION_JSON);
+
+                mvc.perform(request).andExpect(MockMvcResultMatchers.status().isOk());
+        }
+
+        @Test
+        @DisplayName("GET /api/v1/products with no filters")
+        void shouldReturnProducts() throws Exception {
+                var page = new PageImpl<>(List.of(product), PageRequest.of(0, 10), 1);
+
+                BDDMockito.given(productService.findAll(any(ProductFilterDTO.class), any(Pageable.class)))
+                                .willReturn(page);
+
+                var request = MockMvcRequestBuilders.get("/api/v1/products")
                                 .contentType(MediaType.APPLICATION_JSON);
 
                 mvc.perform(request).andExpect(MockMvcResultMatchers.status().isOk());
