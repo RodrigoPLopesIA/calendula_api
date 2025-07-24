@@ -3,6 +3,8 @@ package br.com.rodrigoplopesdev.calendula_api.services;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import br.com.rodrigoplopesdev.calendula_api.dtos.CreateProductDTO;
@@ -61,8 +63,8 @@ public class ProductService {
         this.productRepository.delete(product);
     }
 
-    public List<Product> findAll() {
-        return productRepository.findAll();
+    public Page<Product> findAll(Pageable page) {
+        return productRepository.findAll(page);
     }
 
 }
