@@ -1,8 +1,15 @@
 package br.com.rodrigoplopesdev.calendula_api.services;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -15,11 +22,17 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.util.Assert;
 
 import br.com.rodrigoplopesdev.calendula_api.dtos.CreateProductDTO;
 import br.com.rodrigoplopesdev.calendula_api.dtos.ProductDTO;
+import br.com.rodrigoplopesdev.calendula_api.dtos.ProductFilterDTO;
 import br.com.rodrigoplopesdev.calendula_api.exceptions.BusinessException;
 import br.com.rodrigoplopesdev.calendula_api.exceptions.DuplicatedTitleException;
 import br.com.rodrigoplopesdev.calendula_api.exceptions.EntityNotFoundException;
@@ -35,6 +48,9 @@ public class ProductServiceTest {
 
     @Mock
     private ProductRepository productRepository;
+
+    @Mock
+    private MongoTemplate mongoTemplate;
 
     @Test
     @DisplayName("Product Service -> should create a new product")
@@ -202,6 +218,42 @@ public class ProductServiceTest {
         Assertions.assertThat(result).isInstanceOf(EntityNotFoundException.class);
         Assertions.assertThat(result.getMessage()).isEqualTo(String.format("Product with id %s not exists.", id));
         Mockito.verify(productRepository, never()).delete(product);
+    }
+
+    @Test
+    void shouldReturnFilteredProducts() {
+        // Arrange
+        ProductFilterDTO filter = new ProductFilterDTO(
+                "Bolsa bag",
+                "roupas",
+                List.of("azul"),
+                BigDecimal.valueOf(50.0D),
+                BigDecimal.valueOf(150.0D));
+
+        Pageable pageable = PageRequest.of(0, 10);
+
+        Product product = product = Product.builder().id("2f44ea94-d261-4cb3-ba23-3aadff7cfa2e").colors(List.of("Azul"))
+                .images(List.of("images"))
+                .title("Bolsa bag").price(50.0).description("saasdasd").build();
+        List<Product> productList = List.of(product);
+
+        // Mocka find e count
+        when(mongoTemplate.find(any(Query.class), eq(Product.class)))
+                .thenReturn(productList);
+        when(mongoTemplate.count(any(Query.class), eq(Product.class)))
+                .thenReturn(1L);
+
+        // Act
+        Page<Product> result = productService.findAll(filter, pageable);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(1, result.getTotalElements());
+        assertEquals(productList, result.getContent());
+
+        // Verifica que o mongoTemplate foi chamado corretamente
+        verify(mongoTemplate).find(any(Query.class), eq(Product.class));
+        verify(mongoTemplate).count(any(Query.class), eq(Product.class));
     }
 
 }
