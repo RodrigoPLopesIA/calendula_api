@@ -18,6 +18,7 @@ import java.util.List;
 
 import org.assertj.core.api.Assertions;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
@@ -31,6 +32,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -43,27 +45,35 @@ public class ProductControllerTest {
         @Autowired
         private MockMvc mvc;
 
-        @MockBean
+        @MockitoBean
         private ProductService productService;
 
-        @Test
-        @DisplayName("GET /api/v1/products")
-        public void shouldReturnAllProducts() throws Exception {
+        Product product;
 
-                Product product = Product.builder().id("").colors(List.of("Azul")).images(List.of("images"))
+        @BeforeEach
+        public void setup() {
+                product = Product.builder().id("2f44ea94-d261-4cb3-ba23-3aadff7cfa2e").colors(List.of("Azul"))
+                                .images(List.of("images"))
                                 .title("sadf").price(25D).description("saasdasd").build();
+        }
 
-                var page = new PageImpl<Product>(List.of(product), PageRequest.of(0, 100), 1);
+        @Test
+        @DisplayName("GET /api/v1/products with filters")
+        void shouldReturnFilteredProducts() throws Exception {
+                var page = new PageImpl<>(List.of(product), PageRequest.of(0, 10), 1);
 
-                BDDMockito.given(productService.findAll(Mockito.any(Pageable.class)))
+                given(productService.findAll(any(ProductFilterDTO.class), any(Pageable.class)))
                                 .willReturn(page);
 
-                var request = MockMvcRequestBuilders
-                                .get("/api/v1/products")
+                var request = MockMvcRequestBuilders.get("/api/v1/products")
+                                .param("search", "fone")
+                                .param("category", "eletronico")
+                                .param("colors", "preto", "azul")
+                                .param("minPrice", "20")
+                                .param("maxPrice", "200")
                                 .contentType(MediaType.APPLICATION_JSON);
 
-                mvc.perform(request).andExpect(MockMvcResultMatchers.status().isOk());
-
+                mvc.perform(request).andExpect(status().isOk());
         }
 
         @Test
