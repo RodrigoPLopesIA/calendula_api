@@ -10,6 +10,9 @@ import br.com.rodrigoplopesdev.calendula_api.patterns.factory.ProductFactory;
 import br.com.rodrigoplopesdev.calendula_api.services.ProductService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import static org.mockito.ArgumentMatchers.any;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -44,11 +47,16 @@ public class ProductControllerTest {
         @Test
         @DisplayName("GET /api/v1/products")
         public void shouldReturnAllProducts() throws Exception{
+
+                List<Product> products = new ArrayList<>();
+                BDDMockito.given(productService.findAll()).willReturn(products);
+                
                 var request = MockMvcRequestBuilders
                 .get("/api/v1/products")
                 .contentType(MediaType.APPLICATION_JSON);
 
                 mvc.perform(request).andExpect(MockMvcResultMatchers.status().isOk());
+         
         }
 
         @Test
