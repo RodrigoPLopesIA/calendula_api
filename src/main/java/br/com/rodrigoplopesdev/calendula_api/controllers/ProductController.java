@@ -30,6 +30,12 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
+    @GetMapping()
+    public ResponseEntity index () {
+        return ResponseEntity.ok().build();
+    }
+    
+
     @PostMapping
     public ResponseEntity<ProductDTO> create(@Valid @RequestBody CreateProductDTO data) {
         Product product = this.productService.save(data);
