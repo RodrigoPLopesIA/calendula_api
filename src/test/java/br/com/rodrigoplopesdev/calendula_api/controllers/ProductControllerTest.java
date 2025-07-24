@@ -29,7 +29,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.web.bind.MethodArgumentNotValidException;
+
 
 @WebMvcTest
 @AutoConfigureMockMvc
@@ -40,6 +40,16 @@ public class ProductControllerTest {
 
         @MockBean
         private ProductService productService;
+
+        @Test
+        @DisplayName("GET /api/v1/products")
+        public void shouldReturnAllProducts() throws Exception{
+                var request = MockMvcRequestBuilders
+                .get("/api/v1/products")
+                .contentType(MediaType.APPLICATION_JSON);
+
+                mvc.perform(request).andExpect(MockMvcResultMatchers.status().isOk());
+        }
 
         @Test
         @DisplayName("POST /api/v1/products")
