@@ -232,7 +232,7 @@ public class ProductServiceTest {
 
         Pageable pageable = PageRequest.of(0, 10);
 
-        Product product = product = Product.builder().id("2f44ea94-d261-4cb3-ba23-3aadff7cfa2e").colors(List.of("Azul"))
+        Product product = Product.builder().id("2f44ea94-d261-4cb3-ba23-3aadff7cfa2e").colors(List.of("Azul"))
                 .images(List.of("images"))
                 .title("Bolsa bag").price(50.0).description("saasdasd").build();
         List<Product> productList = List.of(product);
