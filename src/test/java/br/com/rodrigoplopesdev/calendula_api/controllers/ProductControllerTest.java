@@ -2,6 +2,7 @@ package br.com.rodrigoplopesdev.calendula_api.controllers;
 
 import br.com.rodrigoplopesdev.calendula_api.dtos.CreateProductDTO;
 import br.com.rodrigoplopesdev.calendula_api.dtos.ProductDTO;
+import br.com.rodrigoplopesdev.calendula_api.dtos.ProductFilterDTO;
 import br.com.rodrigoplopesdev.calendula_api.exceptions.BusinessException;
 import br.com.rodrigoplopesdev.calendula_api.exceptions.DuplicatedTitleException;
 import br.com.rodrigoplopesdev.calendula_api.exceptions.EntityNotFoundException;
@@ -62,7 +63,7 @@ public class ProductControllerTest {
         void shouldReturnFilteredProducts() throws Exception {
                 var page = new PageImpl<>(List.of(product), PageRequest.of(0, 10), 1);
 
-                given(productService.findAll(any(ProductFilterDTO.class), any(Pageable.class)))
+                BDDMockito.given(productService.findAll(any(ProductFilterDTO.class), any(Pageable.class)))
                                 .willReturn(page);
 
                 var request = MockMvcRequestBuilders.get("/api/v1/products")
@@ -73,7 +74,7 @@ public class ProductControllerTest {
                                 .param("maxPrice", "200")
                                 .contentType(MediaType.APPLICATION_JSON);
 
-                mvc.perform(request).andExpect(status().isOk());
+                mvc.perform(request).andExpect(MockMvcResultMatchers.status().isOk());
         }
 
         @Test
