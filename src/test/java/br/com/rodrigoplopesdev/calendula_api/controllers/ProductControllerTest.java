@@ -27,12 +27,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-
 
 @WebMvcTest
 @AutoConfigureMockMvc
@@ -46,17 +48,22 @@ public class ProductControllerTest {
 
         @Test
         @DisplayName("GET /api/v1/products")
-        public void shouldReturnAllProducts() throws Exception{
+        public void shouldReturnAllProducts() throws Exception {
 
-                List<Product> products = new ArrayList<>();
-                BDDMockito.given(productService.findAll()).willReturn(products);
-                
+                Product product = Product.builder().id("").colors(List.of("Azul")).images(List.of("images"))
+                                .title("sadf").price(25D).description("saasdasd").build();
+
+                var page = new PageImpl<Product>(List.of(product), PageRequest.of(0, 100), 1);
+
+                BDDMockito.given(productService.findAll(Mockito.any(Pageable.class)))
+                                .willReturn(page);
+
                 var request = MockMvcRequestBuilders
-                .get("/api/v1/products")
-                .contentType(MediaType.APPLICATION_JSON);
+                                .get("/api/v1/products")
+                                .contentType(MediaType.APPLICATION_JSON);
 
                 mvc.perform(request).andExpect(MockMvcResultMatchers.status().isOk());
-         
+
         }
 
         @Test
