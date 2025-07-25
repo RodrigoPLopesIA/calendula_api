@@ -5,3 +5,7 @@ spring:
         mongodb:
             uri: ${MONGO_URI:mongodb://root:root@localhost:27017/calendula?authSource=admin}
             authentication-database: ${DB_NAME:admin}
+springdoc: 
+    api-docs: 
+        path: /api-docs
+    packages-to-scan: "*"
