@@ -21,8 +21,8 @@ public class UserServiceTest {
 
 
     @Test
-    @DisplayName("Should authenticate user")
-    public void shouldAuthenticateUser(){
+    @DisplayName("Should create user")
+    public void shouldCreateUser(){
 
     }
 
