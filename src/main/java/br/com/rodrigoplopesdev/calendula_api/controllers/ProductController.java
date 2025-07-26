@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -23,6 +24,7 @@ import java.math.BigDecimal;
 import java.net.URI;
 import java.util.List;
 
+@Tag(name = "Product Controller", description = "All products methods")
 @RestController
 @RequestMapping("/api/v1/products")
 public class ProductController {

@@ -1,11 +1,17 @@
 spring:
-    application:
-        name: calendula_api
-    data:
-        mongodb:
-            uri: ${MONGO_URI:mongodb://root:root@localhost:27017/calendula?authSource=admin}
-            authentication-database: ${DB_NAME:admin}
-springdoc: 
-    api-docs: 
-        path: /api-docs
-    packages-to-scan: "*"
+  application:
+    name: calendula_api
+  data:
+    mongodb:
+      uri: ${MONGO_URI:mongodb://root:root@localhost:27017/calendula?authSource=admin}
+      authentication-database: ${DB_NAME:admin}
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+    tags-sorter: alpha
+    display-request-duration: true
+
