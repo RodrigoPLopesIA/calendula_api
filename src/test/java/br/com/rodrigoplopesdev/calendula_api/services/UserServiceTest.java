@@ -1,6 +1,8 @@
 package br.com.rodrigoplopesdev.calendula_api.services;
 
 
+import br.com.rodrigoplopesdev.calendula_api.repositories.UserRepository;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,6 +26,11 @@ public class UserServiceTest {
     @DisplayName("Should create user")
     public void shouldCreateUser(){
 
+
+
+        var result = userService.create();
+
+        Assertions.assertThat(result).isNotNull();
     }
 
 }
