@@ -26,18 +26,27 @@ public class UserServiceTest {
 
     @Mock
     private UserRepository userRepository;
+    CreateUserDTO createDto;
+    ListUserDTO listDTO;
 
+    User listUser;
+    User createUser;
+    @BeforeEach
+    public void setup(){
+        createDto = new CreateUserDTO("test", "test", "test@email.com", "123456", "123456");
+        listDTO = new ListUserDTO("123456","test", "test", "test@email.com", "123456");
+
+        listUser = new User("123456", "test", "test", "test@email.com", "123456");
+        createUser = new User("test", "test", "test@email.com", "123456");
+
+    }
 
 
     @Test
     @DisplayName("Should create user")
     public void shouldCreateUser(){
 
-        CreateUserDTO createDto = new CreateUserDTO("test", "test", "test@email.com", "123456", "123456");
-        ListUserDTO listDTO = new ListUserDTO("123456","test", "test", "test@email.com", "123456");
-
-        User user = new User("123456", "test", "test", "test@email.com", "123456");
-        Mockito.when(userRepository.save(Mockito.any(User.class))).thenReturn(user);
+        Mockito.when(userRepository.save(Mockito.any(User.class))).thenReturn(listUser);
 
         var result = userService.create(createDto);
 

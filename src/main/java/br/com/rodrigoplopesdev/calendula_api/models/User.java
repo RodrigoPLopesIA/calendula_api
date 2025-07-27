@@ -60,4 +60,11 @@ public class User {
         this.setEmail(email);
         this.setPassword(password);
     }
+
+    public User(String firstName, String lastName, String email, String password) {
+        this.setFirstName(firstName);
+        this.setLastName(lastName);
+        this.setEmail(email);
+        this.setPassword(password);
+    }
 }
