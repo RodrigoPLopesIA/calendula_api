@@ -1,6 +1,8 @@
 package br.com.rodrigoplopesdev.calendula_api.models;
 
 
+import br.com.rodrigoplopesdev.calendula_api.dtos.CreateUserDTO;
+import br.com.rodrigoplopesdev.calendula_api.dtos.ListUserDTO;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
@@ -12,10 +14,10 @@ import java.time.Instant;
 @Builder
 @Getter
 @Setter
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
+@ToString
 @Document(collection = "users")
 public class User {
 
@@ -30,11 +32,32 @@ public class User {
 
     private String password;
 
-    private Address address;
 
     @CreatedDate
     private Instant createdAt;
 
     @LastModifiedDate
     private Instant updatedAt;
+
+    public User(CreateUserDTO data) {
+        this.setFirstName(data.firstName());
+        this.setLastName(data.lastName());
+        this.setEmail(data.email());
+        this.setPassword(data.password());
+    }
+    public User(ListUserDTO data) {
+        this.setId(data.id());
+        this.setFirstName(data.firstName());
+        this.setLastName(data.lastName());
+        this.setEmail(data.email());
+        this.setPassword(data.password());
+    }
+
+    public User(String id, String firstName, String lastName, String email, String password) {
+        this.setId(id);
+        this.setFirstName(firstName);
+        this.setLastName(lastName);
+        this.setEmail(email);
+        this.setPassword(password);
+    }
 }

@@ -3,22 +3,20 @@ package br.com.rodrigoplopesdev.calendula_api.models;
 import java.time.Instant;
 import java.util.List;
 
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.config.EnableReactiveMongoAuditing;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
 @Builder
 @Getter
 @Setter
-@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@EqualsAndHashCode(of = "id")
+@ToString
 @Document(collection = "products")
 public class Product {
 
