@@ -1,6 +1,8 @@
 package br.com.rodrigoplopesdev.calendula_api.dtos;
 
-public record CreateUserDTO(String firstName, String lastName, String email, String password, String confirmPassword) {
+import jakarta.validation.constraints.*;
+
+public record CreateUserDTO(String firstName, String lastName, @NotBlank() @Email() String email, @NotBlank() @Size(min = 8, max = 16) String password, @NotBlank() @Size(min = 8, max = 16) String confirmPassword) {
 
 
 }

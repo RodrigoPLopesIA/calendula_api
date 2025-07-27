@@ -41,7 +41,7 @@ public class UserServiceTest {
     @BeforeEach
     public void setup(){
         createDto = new CreateUserDTO("test", "test", "test@email.com", "123456", "123456");
-        listDTO = new ListUserDTO("123456","test", "test", "test@email.com", "123456");
+        listDTO = new ListUserDTO("123456","test", "test", "test@email.com");
 
         listUser = new User("123456", "test", "test", "test@email.com", "123456");
         createUser = new User("test", "test", "test@email.com", "123456");

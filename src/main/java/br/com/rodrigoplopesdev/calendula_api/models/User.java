@@ -50,7 +50,6 @@ public class User {
         this.setFirstName(data.firstName());
         this.setLastName(data.lastName());
         this.setEmail(data.email());
-        this.setPassword(data.password());
     }
 
     public User(String id, String firstName, String lastName, String email, String password) {

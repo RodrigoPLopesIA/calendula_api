@@ -6,11 +6,10 @@ public record ListUserDTO(
         String id,
         String firstName,
         String lastName,
-        String email,
-        String password
+        String email
 ) {
 
     public ListUserDTO(User user) {
-        this(user.getId(), user.getFirstName(),user.getLastName(), user.getEmail(), user.getPassword());
+        this(user.getId(), user.getFirstName(),user.getLastName(), user.getEmail());
     }
 }
