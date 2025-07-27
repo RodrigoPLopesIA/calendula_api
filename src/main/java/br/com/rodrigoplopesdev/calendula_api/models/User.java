@@ -1,10 +1,7 @@
 package br.com.rodrigoplopesdev.calendula_api.models;
 
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -16,6 +13,9 @@ import java.time.Instant;
 @Getter
 @Setter
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(of = "id")
 @Document(collection = "users")
 public class User {
 
@@ -29,6 +29,8 @@ public class User {
     private String email;
 
     private String password;
+
+    private Address address;
 
     @CreatedDate
     private Instant createdAt;
