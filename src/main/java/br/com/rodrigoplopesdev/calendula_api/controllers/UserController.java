@@ -3,6 +3,7 @@ package br.com.rodrigoplopesdev.calendula_api.controllers;
 import br.com.rodrigoplopesdev.calendula_api.dtos.CreateUserDTO;
 import br.com.rodrigoplopesdev.calendula_api.dtos.ListUserDTO;
 import br.com.rodrigoplopesdev.calendula_api.services.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,7 +23,7 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity<ListUserDTO> register(@RequestBody CreateUserDTO data) {
+    public ResponseEntity<ListUserDTO> register(@Valid @RequestBody CreateUserDTO data) {
         URI uri = UriComponentsBuilder.fromUriString("/login").buildAndExpand().toUri();
         return ResponseEntity.created(uri).body(this.userService.create(data));
     }

@@ -16,7 +16,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
@@ -31,6 +35,9 @@ public class UserServiceTest {
 
     @Mock
     private PasswordEncoder passwordEncoder;
+
+    @Mock
+    private UserDetails userDetails;
 
     CreateUserDTO createDto;
     ListUserDTO listDTO;
@@ -78,6 +85,32 @@ public class UserServiceTest {
 
 
         Mockito.verify(userRepository, Mockito.never()).save(Mockito.any(User.class));
+    }
+
+    @Test
+    @DisplayName("Should find user by email")
+    public void shouldFindUserByEmail(){
+        String username = "test@email.com";
+
+        Mockito.when(userRepository.findByEmail(username)).thenReturn(userDetails);
+
+        var result = userService.loadUserByUsername(username);
+
+        Assertions.assertThat(result).isNotNull();
+    }
+
+    @Test
+    @DisplayName("Should throw UsernameNotFoundException when user not found")
+    public void shouldReturnUsernameNotFoundException() {
+        String username = "test@email.com";
+
+        Mockito.when(userRepository.findByEmail(username)).thenReturn(null);
+
+        Throwable result = Assertions.catchThrowable(() -> userService.loadUserByUsername(username));
+
+        Assertions.assertThat(result)
+                .isInstanceOf(UsernameNotFoundException.class)
+                .hasMessageContaining("User not found");
     }
 
 }
